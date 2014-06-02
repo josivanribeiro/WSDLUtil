@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WSDLUtil">
+	
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="${build.dir}/dist" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="lib.dir" value="lib"/>
+	
+	<property name="jar.name" value="boomi-updatedocs-1.3.0.jar"/>
+
+    <path id="classpath.compile.libs">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+	
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+	
+	<target name="compile-code" depends="clean">
+			<javac srcdir="${src.dir}" destdir="${classes.dir}" debug="on" target="1.7">
+				<classpath>
+					<path refid="classpath.compile.libs" />					
+				</classpath>
+			</javac>
+    </target>
+
+	<target name="generate-jar" depends="compile-code">
+			<jar destfile="${dist.dir}/${jar.name}">
+				<fileset dir="${classes.dir}">
+					<include name="**/**" />
+				</fileset>
+			</jar>
+	</target>
+	
+	<target name="generate-webservice-client" depends="clean">
+		<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+			<classpath>
+				<path refid="classpath.compile.libs" />
+			</classpath>
+		</taskdef>
+		<wsimport 
+			  debug="true" 
+			  verbose="true" 
+			  keep="true" 
+              destdir="${src.dir}"			  
+              wsdl="wsdl/boomi.wsdl">
+			  <!--arg value="-b"/-->
+    	</wsimport>    
+    </target>	
+	
+</project>
